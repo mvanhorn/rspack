@@ -941,6 +941,10 @@ impl ModuleConcatenationPlugin {
           .build_chunk_graph_artifact
           .chunk_graph
           .get_number_of_module_chunks(module_id);
+        if number_of_module_chunks == 0 {
+          bailout_reason.push("Module is not in any chunk".into());
+          return (false, false, module_id, bailout_reason);
+        }
         let is_entry_module = compilation
           .build_chunk_graph_artifact
           .chunk_graph
@@ -967,11 +971,6 @@ impl ModuleConcatenationPlugin {
           bailout_reason.push("Module is not in strict mode".into());
           return (false, false, module_id, bailout_reason);
         }
-        if number_of_module_chunks == 0 {
-          bailout_reason.push("Module is not in any chunk".into());
-          return (false, false, module_id, bailout_reason);
-        }
-
         let exports_info = compilation
           .exports_info_artifact
           .get_exports_info_data(&module_id);
